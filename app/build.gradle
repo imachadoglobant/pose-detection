@@ -1,0 +1,85 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+}
+
+android {
+    namespace 'com.globant.pose_detection'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.globant.pose_detection"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.8'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(path: ':domain')
+    implementation project(path: ':di')
+
+    def lib = rootProject.ext.generalDependencies
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation lib.coroutinesAndroid
+    implementation lib.coroutinesCore
+    implementation lib.androidx_viewmodel
+    implementation lib.appcompat
+    implementation lib.coreKtx
+    implementation lib.koin_android
+
+    testImplementation lib.junit_version
+    androidTestImplementation lib.test_runner_version
+    androidTestImplementation lib.espresso_core_version
+
+    testImplementation lib.google_truth_version
+    testImplementation lib.mockito_core_version
+    testImplementation lib.koin_test
+
+    testImplementation lib.coreTest
+    testImplementation lib.coroutinesCore
+    testImplementation lib.coroutinesAndroid
+    testImplementation lib.coroutinesTest
+
+    implementation platform(lib.compose_bom)
+    implementation lib.compose_activity
+    implementation lib.compose_ui_tooling_preview
+    implementation lib.compose_material3
+
+    androidTestImplementation platform(lib.compose_bom)
+    androidTestImplementation lib.compose_ui_test_junit4
+    debugImplementation lib.compose_ui_tooling
+    debugImplementation lib.compose_ui_test_manifest
+
+}
