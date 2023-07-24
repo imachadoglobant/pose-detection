@@ -1,0 +1,41 @@
+ext {
+    appcompat = '1.6.1'
+    coreKtx = '1.10.1'
+    coroutinesCore = '1.7.1'
+    coroutinesAndroid = '1.7.1'
+    coroutinesTest = '1.7.1'
+    coreTest = '2.2.0'
+    espresso_core_version = '3.5.1'
+    google_truth_version = '1.1.4'
+    test_runner_version = '1.5.2'
+    mockito_core_version = '5.3.1'
+    junit_version = '4.13.2'
+    koin_version = '3.4.1'
+    androidx_viewmodel = '2.6.1'
+    compose_bom_version = '2023.06.01'
+
+    generalDependencies = [
+            appcompat                   : "androidx.appcompat:appcompat:${appcompat}",
+            coreKtx                     : "androidx.core:core-ktx:${coreKtx}",
+            androidx_viewmodel          : "androidx.lifecycle:lifecycle-viewmodel-ktx:${androidx_viewmodel}",
+            coroutinesCore              : "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesCore}",
+            coroutinesAndroid           : "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesAndroid}",
+            coroutinesTest              : "org.jetbrains.kotlinx:kotlinx-coroutines-test:${coroutinesTest}",
+            coreTest                    : "androidx.arch.core:core-testing:${coreTest}",
+            espresso_core_version       : "androidx.test.espresso:espresso-core:${espresso_core_version}",
+            google_truth_version        : "com.google.truth:truth:${google_truth_version}",
+            junit_version               : "junit:junit:${junit_version}",
+            test_runner_version         : "androidx.test:runner:${test_runner_version}",
+            mockito_core_version        : "org.mockito:mockito-core:${mockito_core_version}",
+            koin_core                   : "io.insert-koin:koin-core:${koin_version}",
+            koin_android                : "io.insert-koin:koin-android:${koin_version}",
+            koin_test                   : "io.insert-koin:koin-test:${koin_version}",
+            compose_bom                 : "androidx.compose:compose-bom:${compose_bom_version}",
+            compose_activity            : "androidx.activity:activity-compose",
+            compose_ui_tooling_preview  : "androidx.compose.ui:ui-tooling-preview",
+            compose_material3           : "androidx.compose.material3:material3",
+            compose_ui_test_junit4      : "androidx.compose.ui:ui-test-junit4",
+            compose_ui_tooling          : "androidx.compose.ui:ui-tooling",
+            compose_ui_test_manifest    : "androidx.compose.ui:ui-test-manifest",
+    ]
+}
