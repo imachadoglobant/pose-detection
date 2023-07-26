@@ -12,7 +12,11 @@ ext {
     junit_version = '4.13.2'
     koin_version = '3.4.1'
     androidx_viewmodel = '2.6.1'
+    junit_test_ext_version = '1.1.5'
     compose_bom_version = '2023.06.01'
+    pose_detection_version = '18.0.0-beta3'
+    guava_version = '27.1-android'
+    camera_version = '1.2.3' // CameraX
 
     generalDependencies = [
             appcompat                   : "androidx.appcompat:appcompat:${appcompat}",
@@ -30,6 +34,7 @@ ext {
             koin_core                   : "io.insert-koin:koin-core:${koin_version}",
             koin_android                : "io.insert-koin:koin-android:${koin_version}",
             koin_test                   : "io.insert-koin:koin-test:${koin_version}",
+            junit_test_ext              : "androidx.test.ext:junit:$junit_test_ext_version",
             compose_bom                 : "androidx.compose:compose-bom:${compose_bom_version}",
             compose_activity            : "androidx.activity:activity-compose",
             compose_ui_tooling_preview  : "androidx.compose.ui:ui-tooling-preview",
@@ -37,5 +42,12 @@ ext {
             compose_ui_test_junit4      : "androidx.compose.ui:ui-test-junit4",
             compose_ui_tooling          : "androidx.compose.ui:ui-tooling",
             compose_ui_test_manifest    : "androidx.compose.ui:ui-test-manifest",
+
+            mlkit_pose_detection        :"com.google.mlkit:pose-detection:$pose_detection_version", // If you want to use the base sdk
+            mlkit_pose_detection_accurate: "com.google.mlkit:pose-detection-accurate:$pose_detection_version", // If you want to use the accurate sdk
+            guava                       : "com.google.guava:guava:$guava_version",
+            camera_camera2              : "androidx.camera:camera-camera2:$camera_version",
+            camera_camera_lifecycle     : "androidx.camera:camera-lifecycle:$camera_version",
+            camera_camera_view          :"androidx.camera:camera-view:$camera_version",
     ]
 }

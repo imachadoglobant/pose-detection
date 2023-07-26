@@ -1,11 +1,10 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.devtools.ksp'
 }
 
 android {
-    namespace 'com.globant.data'
+    namespace 'com.google.mlkit.vision.demo'
     compileSdk 33
 
     defaultConfig {
@@ -21,25 +20,36 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
-    kotlinOptions {
-        jvmTarget = '17'
+    // Do NOT compress tflite model files (need to call out to developers!)
+    aaptOptions {
+        noCompress "tflite"
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':domain')
 
     def lib = rootProject.ext.generalDependencies
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     testImplementation lib.junit_version
     androidTestImplementation lib.test_runner_version
     androidTestImplementation lib.espresso_core_version
     androidTestImplementation lib.junit_test_ext
+
+    implementation lib.mlkit_pose_detection
+    implementation lib.mlkit_pose_detection_accurate
+    implementation lib.guava
+    // CameraX
+    implementation lib.camera_camera2
+    implementation lib.camera_camera_lifecycle
+    implementation lib.camera_camera_view
 }
