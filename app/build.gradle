@@ -49,6 +49,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':domain')
     implementation project(path: ':di')
+    implementation project(path: ':features:static-image-pd')
 
     def lib = rootProject.ext.generalDependencies
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -62,6 +63,7 @@ dependencies {
     testImplementation lib.junit_version
     androidTestImplementation lib.test_runner_version
     androidTestImplementation lib.espresso_core_version
+    androidTestImplementation lib.junit_test_ext
 
     testImplementation lib.google_truth_version
     testImplementation lib.mockito_core_version

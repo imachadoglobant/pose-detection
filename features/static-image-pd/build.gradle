@@ -1,11 +1,10 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.devtools.ksp'
 }
 
 android {
-    namespace 'com.globant.data'
+    namespace 'com.globant.static_image_pd'
     compileSdk 33
 
     defaultConfig {
@@ -30,6 +29,13 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.8'
+    }
 }
 
 dependencies {
@@ -37,6 +43,12 @@ dependencies {
     implementation project(path: ':domain')
 
     def lib = rootProject.ext.generalDependencies
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation platform(lib.compose_bom)
+    implementation lib.compose_ui_tooling_preview
+    implementation lib.compose_material3
+    implementation lib.compose_activity
 
     testImplementation lib.junit_version
     androidTestImplementation lib.test_runner_version

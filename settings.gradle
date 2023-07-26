@@ -1,3 +1,5 @@
 include ':app', ':domain'
 include ':di'
 include ':data'
+include ':features:static-image-pd'
+include ':framework:mlkit-pose-detector'
