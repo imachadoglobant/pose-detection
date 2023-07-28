@@ -48,8 +48,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':domain')
+    implementation project(path: ':data')
     implementation project(path: ':di')
-    implementation project(path: ':features:static-image-pd')
 
     def lib = rootProject.ext.generalDependencies
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -74,6 +74,7 @@ dependencies {
     testImplementation lib.coroutinesAndroid
     testImplementation lib.coroutinesTest
 
+    implementation lib.androidx_viewmodel_compose
     implementation platform(lib.compose_bom)
     implementation lib.compose_activity
     implementation lib.compose_ui_tooling_preview
@@ -84,4 +85,5 @@ dependencies {
     debugImplementation lib.compose_ui_tooling
     debugImplementation lib.compose_ui_test_manifest
 
+    implementation lib.mlkit_pose_detection
 }
