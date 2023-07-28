@@ -22,6 +22,7 @@ ext {
             appcompat                   : "androidx.appcompat:appcompat:${appcompat}",
             coreKtx                     : "androidx.core:core-ktx:${coreKtx}",
             androidx_viewmodel          : "androidx.lifecycle:lifecycle-viewmodel-ktx:${androidx_viewmodel}",
+            androidx_viewmodel_compose : "androidx.lifecycle:lifecycle-viewmodel-compose:${androidx_viewmodel}",
             coroutinesCore              : "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesCore}",
             coroutinesAndroid           : "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesAndroid}",
             coroutinesTest              : "org.jetbrains.kotlinx:kotlinx-coroutines-test:${coroutinesTest}",
@@ -45,9 +46,6 @@ ext {
 
             mlkit_pose_detection        :"com.google.mlkit:pose-detection:$pose_detection_version", // If you want to use the base sdk
             mlkit_pose_detection_accurate: "com.google.mlkit:pose-detection-accurate:$pose_detection_version", // If you want to use the accurate sdk
-            guava                       : "com.google.guava:guava:$guava_version",
-            camera_camera2              : "androidx.camera:camera-camera2:$camera_version",
-            camera_camera_lifecycle     : "androidx.camera:camera-lifecycle:$camera_version",
-            camera_camera_view          :"androidx.camera:camera-view:$camera_version",
+
     ]
 }

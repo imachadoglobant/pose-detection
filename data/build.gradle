@@ -42,4 +42,6 @@ dependencies {
     androidTestImplementation lib.test_runner_version
     androidTestImplementation lib.espresso_core_version
     androidTestImplementation lib.junit_test_ext
+
+    implementation lib.mlkit_pose_detection
 }
