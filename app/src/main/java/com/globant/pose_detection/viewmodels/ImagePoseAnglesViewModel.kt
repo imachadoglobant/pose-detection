@@ -2,10 +2,7 @@ package com.globant.pose_detection.viewmodels
 
 import android.content.ContentResolver
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -22,9 +19,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
-class StaticImagePDViewModel constructor(
+class ImagePoseAnglesViewModel constructor(
     val getJointAngles: GetJointAngles
-): ViewModel() {
+) : ViewModel() {
 
     private val _imageBitmap = MutableStateFlow<Bitmap?>(null)
     val imageBitmap = _imageBitmap.asStateFlow()
@@ -32,9 +29,9 @@ class StaticImagePDViewModel constructor(
     val poseAngles = imageBitmap
         .filterNotNull()
         .filterNot { bitmap ->
-            bitmap.byteCount==0
+            bitmap.byteCount == 0
         }
-        .map {bitmap->
+        .map { bitmap ->
             getJointAngles(bitmap)
         }
         .shareIn(
@@ -45,10 +42,10 @@ class StaticImagePDViewModel constructor(
             replay = 0
         )
 
-    fun setImage(contentResolver: ContentResolver, imageUri: Uri?){
+    fun setImage(contentResolver: ContentResolver, imageUri: Uri?) {
         viewModelScope.launch {
             imageUri?.let { uri -> contentResolver.uriToBitmap(imageUri = uri) }
-                ?.let {bitmap->
+                ?.let { bitmap ->
                     _imageBitmap.emit(bitmap)
                 }
         }
@@ -56,10 +53,10 @@ class StaticImagePDViewModel constructor(
 
 }
 
-class StaticImagePDViewModelFactory() : ViewModelProvider.Factory {
+class ImagePoseAnglesViewModelFactory() : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(StaticImagePDViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(ImagePoseAnglesViewModel::class.java)) {
             val poseDetectorOptions = PoseDetectorOptions
                 .Builder()
                 .setDetectorMode(PoseDetectorOptions.SINGLE_IMAGE_MODE)
@@ -67,7 +64,7 @@ class StaticImagePDViewModelFactory() : ViewModelProvider.Factory {
             val poseAngleDetector = PoseAngleDetectorImpl(poseDetectorOptions)
 
             @Suppress("UNCHECKED_CAST")
-            return StaticImagePDViewModel(GetJointAngles(poseAngleDetector)) as T
+            return ImagePoseAnglesViewModel(GetJointAngles(poseAngleDetector)) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

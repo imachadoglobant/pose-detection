@@ -20,14 +20,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.globant.domain.entities.PoseAngles
-import com.globant.pose_detection.viewmodels.StaticImagePDViewModel
-import com.globant.pose_detection.viewmodels.StaticImagePDViewModelFactory
+import com.globant.pose_detection.viewmodels.ImagePoseAnglesViewModel
+import com.globant.pose_detection.viewmodels.ImagePoseAnglesViewModelFactory
 
 @Composable
 fun ImagePoseAnglesPage(
     modifier: Modifier = Modifier,
-    staticImagePDViewModel: StaticImagePDViewModel =
-        viewModel(factory = StaticImagePDViewModelFactory())
+    staticImagePDViewModel: ImagePoseAnglesViewModel =
+        viewModel(factory = ImagePoseAnglesViewModelFactory())
 ) {
     val context = LocalContext.current
 
