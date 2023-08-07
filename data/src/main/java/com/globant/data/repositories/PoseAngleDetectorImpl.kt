@@ -2,9 +2,10 @@ package com.globant.data.repositories
 
 import android.graphics.Bitmap
 import com.globant.data.mapper.toPoseLandmark
+import com.globant.domain.entities.Joint
+import com.globant.domain.entities.JointAngle
 import com.globant.domain.entities.PoseAngles
 import com.globant.domain.repositories.PoseAngleDetector
-import com.globant.domain.entities.PoseLandmarkType
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
@@ -23,54 +24,14 @@ class PoseAngleDetectorImpl(
         processImage(imageBitmap = imageBitmap)
             .let { pose->
                 PoseAngles(
-                    leftKnee = getAngle(
-                        pose = pose,
-                        firstLandmarkType = PoseLandmarkType.LEFT_ANKLE,
-                        midLandmarkType = PoseLandmarkType.LEFT_KNEE,
-                        lastLandmarkType = PoseLandmarkType.LEFT_HIP
-                    ),
-                    rightKnee = getAngle(
-                        pose = pose,
-                        firstLandmarkType = PoseLandmarkType.RIGHT_ANKLE,
-                        midLandmarkType = PoseLandmarkType.RIGHT_KNEE,
-                        lastLandmarkType = PoseLandmarkType.RIGHT_HIP
-                    ),
-                    leftHip = getAngle(
-                        pose = pose,
-                        firstLandmarkType = PoseLandmarkType.LEFT_KNEE,
-                        midLandmarkType = PoseLandmarkType.LEFT_HIP,
-                        lastLandmarkType = PoseLandmarkType.LEFT_SHOULDER
-                    ),
-                    rightHip = getAngle(
-                        pose = pose,
-                        firstLandmarkType = PoseLandmarkType.RIGHT_KNEE,
-                        midLandmarkType = PoseLandmarkType.RIGHT_HIP,
-                        lastLandmarkType = PoseLandmarkType.RIGHT_SHOULDER
-                    ),
-                    leftShoulder = getAngle(
-                        pose = pose,
-                        firstLandmarkType = PoseLandmarkType.LEFT_HIP,
-                        midLandmarkType = PoseLandmarkType.LEFT_SHOULDER,
-                        lastLandmarkType = PoseLandmarkType.LEFT_ELBOW
-                    ),
-                    rightShoulder = getAngle(
-                        pose = pose,
-                        firstLandmarkType = PoseLandmarkType.RIGHT_HIP,
-                        midLandmarkType = PoseLandmarkType.RIGHT_SHOULDER,
-                        lastLandmarkType = PoseLandmarkType.RIGHT_ELBOW
-                    ),
-                    leftElbow = getAngle(
-                        pose = pose,
-                        firstLandmarkType = PoseLandmarkType.LEFT_SHOULDER,
-                        midLandmarkType = PoseLandmarkType.LEFT_ELBOW,
-                        lastLandmarkType = PoseLandmarkType.LEFT_WRIST
-                    ),
-                    rightElbow = getAngle(
-                        pose = pose,
-                        firstLandmarkType = PoseLandmarkType.RIGHT_SHOULDER,
-                        midLandmarkType = PoseLandmarkType.RIGHT_ELBOW,
-                        lastLandmarkType = PoseLandmarkType.RIGHT_WRIST
-                    )
+                    angles = JointAngle
+                        .values()
+                        .map { jointAngle ->
+                            Joint(
+                                jointAngle = jointAngle,
+                                angle = getAngle(pose = pose, jointAngle = jointAngle)
+                            )
+                        }
                 )
             }
 
@@ -98,22 +59,16 @@ class PoseAngleDetectorImpl(
 
     private fun getAngle(
         pose: Pose,
-        firstLandmarkType: PoseLandmarkType,
-        midLandmarkType: PoseLandmarkType,
-        lastLandmarkType: PoseLandmarkType
+        jointAngle: JointAngle
     ): Double {
-        return requireNotNull(
-            pose?.let { pose ->
-                val firstLandmark = firstLandmarkType.toPoseLandmark(pose)
-                val midLandmark = midLandmarkType.toPoseLandmark(pose)
-                val lastLandmark = lastLandmarkType.toPoseLandmark(pose)
+        val firstLandmark = jointAngle.firstLandmarkType.toPoseLandmark(pose)
+        val midLandmark = jointAngle.midLandmarkType.toPoseLandmark(pose)
+        val lastLandmark = jointAngle.lastLandmarkType.toPoseLandmark(pose)
 
-                getAngleBetweenPoseLandmark(
-                    requireNotNull(firstLandmark),
-                    requireNotNull(midLandmark),
-                    requireNotNull(lastLandmark)
-                )
-            }
+        return getAngleBetweenPoseLandmark(
+            requireNotNull(firstLandmark),
+            requireNotNull(midLandmark),
+            requireNotNull(lastLandmark)
         )
     }
 

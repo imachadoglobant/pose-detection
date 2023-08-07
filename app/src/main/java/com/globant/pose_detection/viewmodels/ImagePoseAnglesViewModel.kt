@@ -7,7 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.globant.data.repositories.PoseAngleDetectorImpl
+import com.globant.data.repositories.PresetPoseRepositoryImpl
 import com.globant.domain.usecases.GetJointAngles
+import com.globant.domain.usecases.GetPoses
+import com.globant.domain.usecases.ValidatePose
 import com.globant.pose_detection.utils.uriToBitmap
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +23,9 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 class ImagePoseAnglesViewModel constructor(
-    val getJointAngles: GetJointAngles
+    val getPoses: GetPoses,
+    val getJointAngles: GetJointAngles,
+    val validatePose: ValidatePose
 ) : ViewModel() {
 
     private val _imageBitmap = MutableStateFlow<Bitmap?>(null)
@@ -39,7 +44,23 @@ class ImagePoseAnglesViewModel constructor(
             started = SharingStarted.WhileSubscribed(
                 stopTimeoutMillis = 5_000
             ),
-            replay = 0
+            replay = 1
+        )
+
+    val validatedFirstPose = poseAngles
+        .filterNotNull()
+        .map { poseAngles ->
+            validatePose(
+                pose = getPoses().first(),
+                poseAngles = poseAngles
+            )
+        }
+        .shareIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(
+                stopTimeoutMillis = 5_000
+            ),
+            replay = 1
         )
 
     fun setImage(contentResolver: ContentResolver, imageUri: Uri?) {
@@ -64,7 +85,11 @@ class ImagePoseAnglesViewModelFactory() : ViewModelProvider.Factory {
             val poseAngleDetector = PoseAngleDetectorImpl(poseDetectorOptions)
 
             @Suppress("UNCHECKED_CAST")
-            return ImagePoseAnglesViewModel(GetJointAngles(poseAngleDetector)) as T
+            return ImagePoseAnglesViewModel(
+                GetPoses(PresetPoseRepositoryImpl()),
+                GetJointAngles(poseAngleDetector),
+                ValidatePose()
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

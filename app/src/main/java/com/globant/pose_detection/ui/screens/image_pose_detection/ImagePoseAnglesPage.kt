@@ -39,6 +39,10 @@ fun ImagePoseAnglesPage(
         staticImagePDViewModel.poseAngles
     }.collectAsState(initial = null)
 
+    val firstPoseValidation by remember(staticImagePDViewModel.validatedFirstPose) {
+        staticImagePDViewModel.validatedFirstPose
+    }.collectAsState(initial = null)
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -48,7 +52,8 @@ fun ImagePoseAnglesPage(
                 .fillMaxSize()
                 .weight(1f),
             imageBitmap = imageBitmap,
-            poseAngles = poseAngles
+            poseAngles = poseAngles,
+            firstPoseValidation = firstPoseValidation
         )
         ImageSelector(
             onImageSelected = { uri ->
@@ -87,7 +92,8 @@ fun ImageSelector(
 fun ImagePanel(
     modifier: Modifier = Modifier,
     imageBitmap: Bitmap?,
-    poseAngles: PoseAngles? = null
+    poseAngles: PoseAngles? = null,
+    firstPoseValidation: Boolean? = null
 ) {
     Column(modifier = modifier) {
         imageBitmap?.let { bitmap ->
@@ -103,6 +109,10 @@ fun ImagePanel(
 
         poseAngles?.let { poses ->
             Text(text = "Poses:$poses")
+        }
+
+        firstPoseValidation?.let { validationResult ->
+            Text(text = "Fist Pose validation result: $validationResult")
         }
     }
 

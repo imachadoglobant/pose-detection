@@ -1,12 +1,26 @@
 package com.globant.domain.entities
 
+import java.math.RoundingMode
+import java.text.DecimalFormat
+
 data class PoseAngles(
-    val leftKnee: Double,
-    val rightKnee: Double,
-    val leftHip: Double,
-    val rightHip: Double,
-    val leftShoulder: Double,
-    val rightShoulder: Double,
-    val leftElbow: Double,
-    val rightElbow: Double,
-)
+    val angles: List<Joint>
+) {
+    companion object {
+        val df = DecimalFormat("#.#")
+
+        init {
+            df.roundingMode = RoundingMode.HALF_UP
+        }
+    }
+
+    override fun toString(): String {
+        return angles
+            .map { joint ->
+                "${joint.jointAngle.javaClass.simpleName} = ${df.format(joint.angle)}"
+            }
+            .reduce { acc, s ->
+                "$acc, $s"
+            }
+    }
+}
