@@ -45,10 +45,6 @@ fun ImagePoseAnglesPage(
         staticImagePDViewModel.validatedFirstPose
     }.collectAsState(initial = null)
 
-    val firstPoseValidation by remember(staticImagePDViewModel.validatedFirstPose) {
-        staticImagePDViewModel.validatedFirstPose
-    }.collectAsState(initial = null)
-
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -115,10 +111,6 @@ fun ImagePanel(
 
         processedPose?.let { pose ->
             Text(text = "Pose: ${pose.toFormattedString()}")
-        }
-
-        firstPoseValidation?.let { validationResult ->
-            Text(text = "First Pose validation result: $validationResult")
         }
 
         firstPoseValidation?.let { validationResult ->
