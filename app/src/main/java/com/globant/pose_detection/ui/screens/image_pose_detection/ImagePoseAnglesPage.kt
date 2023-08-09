@@ -19,7 +19,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.globant.domain.entities.PoseAngles
+import com.globant.domain.entities.Pose
+import com.globant.pose_detection.utils.toFormattedString
+import com.globant.pose_detection.utils.uriToBitmap
 import com.globant.pose_detection.viewmodels.ImagePoseAnglesViewModel
 import com.globant.pose_detection.viewmodels.ImagePoseAnglesViewModelFactory
 
@@ -35,8 +37,8 @@ fun ImagePoseAnglesPage(
         staticImagePDViewModel.imageBitmap
     }.collectAsState()
 
-    val poseAngles by remember(staticImagePDViewModel.poseAngles) {
-        staticImagePDViewModel.poseAngles
+    val processedPose by remember(staticImagePDViewModel.processedPose) {
+        staticImagePDViewModel.processedPose
     }.collectAsState(initial = null)
 
     val firstPoseValidation by remember(staticImagePDViewModel.validatedFirstPose) {
@@ -52,15 +54,15 @@ fun ImagePoseAnglesPage(
                 .fillMaxSize()
                 .weight(1f),
             imageBitmap = imageBitmap,
-            poseAngles = poseAngles,
+            processedPose = processedPose,
             firstPoseValidation = firstPoseValidation
         )
         ImageSelector(
             onImageSelected = { uri ->
-                staticImagePDViewModel.setImage(
-                    contentResolver = context.contentResolver,
-                    imageUri = uri
-                )
+                context.contentResolver.uriToBitmap(uri)
+                    .let { bitmap ->
+                        staticImagePDViewModel.setImage(bitmap = bitmap)
+                    }
             }
         )
     }
@@ -92,7 +94,7 @@ fun ImageSelector(
 fun ImagePanel(
     modifier: Modifier = Modifier,
     imageBitmap: Bitmap?,
-    poseAngles: PoseAngles? = null,
+    processedPose: Pose? = null,
     firstPoseValidation: Boolean? = null
 ) {
     Column(modifier = modifier) {
@@ -107,8 +109,8 @@ fun ImagePanel(
             )
         }
 
-        poseAngles?.let { poses ->
-            Text(text = "Poses:$poses")
+        processedPose?.let { pose ->
+            Text(text = "Pose: ${pose.toFormattedString()}")
         }
 
         firstPoseValidation?.let { validationResult ->

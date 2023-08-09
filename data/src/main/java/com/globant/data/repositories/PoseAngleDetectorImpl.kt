@@ -4,32 +4,32 @@ import android.graphics.Bitmap
 import com.globant.data.mapper.toPoseLandmark
 import com.globant.domain.entities.Joint
 import com.globant.domain.entities.JointAngle
-import com.globant.domain.entities.PoseAngles
+import com.globant.domain.entities.Pose
 import com.globant.domain.repositories.PoseAngleDetector
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseDetectorOptionsBase
 import com.google.mlkit.vision.pose.PoseLandmark
-import java.lang.Math.atan2
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.atan2
+import com.google.mlkit.vision.pose.Pose as MLKitPose
 
 class PoseAngleDetectorImpl(
     val options: PoseDetectorOptionsBase
 ): PoseAngleDetector {
 
-    override suspend fun getPoseAngles(imageBitmap: Bitmap): PoseAngles =
+    override suspend fun getPoseAngles(imageBitmap: Bitmap): Pose =
         processImage(imageBitmap = imageBitmap)
-            .let { pose->
-                PoseAngles(
-                    angles = JointAngle
+            .let { pose ->
+                Pose(
+                    jointList = JointAngle
                         .values()
                         .map { jointAngle ->
                             Joint(
                                 jointAngle = jointAngle,
-                                angle = getAngle(pose = pose, jointAngle = jointAngle)
+                                angle = getAngle(mlkitPose = pose, jointAngle = jointAngle)
                             )
                         }
                 )
@@ -37,17 +37,17 @@ class PoseAngleDetectorImpl(
 
     private suspend fun processImage(
         imageBitmap: Bitmap
-    ): Pose = suspendCoroutine{continuation->
+    ): MLKitPose = suspendCoroutine { continuation ->
         val detector = PoseDetection.getClient(options)
 
         detector.process(
-                InputImage.fromBitmap(imageBitmap, 0)
-            )
-            .addOnSuccessListener { pose->
+            InputImage.fromBitmap(imageBitmap, 0)
+        )
+            .addOnSuccessListener { pose ->
                 pose?.let { continuation.resume(it) }
                     ?: continuation.resumeWithException(NullPointerException("Pose is null"))
             }
-            .addOnFailureListener { e -> continuation.resumeWithException(e)}
+            .addOnFailureListener { e -> continuation.resumeWithException(e) }
             .addOnCompleteListener { pose->
                 detector.close()
             }
@@ -58,31 +58,39 @@ class PoseAngleDetectorImpl(
     }
 
     private fun getAngle(
-        pose: Pose,
+        mlkitPose: MLKitPose,
         jointAngle: JointAngle
     ): Double {
-        val firstLandmark = jointAngle.firstLandmarkType.toPoseLandmark(pose)
-        val midLandmark = jointAngle.midLandmarkType.toPoseLandmark(pose)
-        val lastLandmark = jointAngle.lastLandmarkType.toPoseLandmark(pose)
+        val firstLandmark = jointAngle.firstLandmarkType.toPoseLandmark(mlkitPose)
+        val midLandmark = jointAngle.midLandmarkType.toPoseLandmark(mlkitPose)
+        val lastLandmark = jointAngle.lastLandmarkType.toPoseLandmark(mlkitPose)
 
         return getAngleBetweenPoseLandmark(
-            requireNotNull(firstLandmark),
-            requireNotNull(midLandmark),
-            requireNotNull(lastLandmark)
+            firstLandmark,
+            midLandmark,
+            lastLandmark
         )
     }
 
-    private fun getAngleBetweenPoseLandmark(firstPoint: PoseLandmark, midPoint: PoseLandmark, lastPoint: PoseLandmark): Double {
+    private fun getAngleBetweenPoseLandmark(
+        firstPoint: PoseLandmark?,
+        midPoint: PoseLandmark?,
+        lastPoint: PoseLandmark?
+    ): Double {
+        if (firstPoint == null || midPoint == null || lastPoint == null) {
+            return 0.0
+        }
+
         var result = Math.toDegrees(
             atan2(
-                (lastPoint.getPosition().y - midPoint.getPosition().y).toDouble(),
-                (lastPoint.getPosition().x - midPoint.getPosition().x).toDouble()
+                (lastPoint.position.y - midPoint.position.y).toDouble(),
+                (lastPoint.position.x - midPoint.position.x).toDouble()
             )
-            -
-            atan2(
-                (firstPoint.getPosition().y - midPoint.getPosition().y).toDouble(),
-                (firstPoint.getPosition().x - midPoint.getPosition().x).toDouble()
-            )
+                    -
+                    atan2(
+                        (firstPoint.position.y - midPoint.position.y).toDouble(),
+                        (firstPoint.position.x - midPoint.position.x).toDouble()
+                    )
         )
 
         result = Math.abs(result) // Angle should never be negative

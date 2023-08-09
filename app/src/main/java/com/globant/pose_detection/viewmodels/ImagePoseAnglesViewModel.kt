@@ -1,8 +1,6 @@
 package com.globant.pose_detection.viewmodels
 
-import android.content.ContentResolver
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,14 +9,12 @@ import com.globant.data.repositories.PresetPoseRepositoryImpl
 import com.globant.domain.usecases.GetJointAngles
 import com.globant.domain.usecases.GetPoses
 import com.globant.domain.usecases.ValidatePose
-import com.globant.pose_detection.utils.uriToBitmap
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
@@ -31,13 +27,9 @@ class ImagePoseAnglesViewModel constructor(
     private val _imageBitmap = MutableStateFlow<Bitmap?>(null)
     val imageBitmap = _imageBitmap.asStateFlow()
 
-    val poseAngles = imageBitmap
-        .filterNotNull()
-        .filterNot { bitmap ->
-            bitmap.byteCount == 0
-        }
-        .map { bitmap ->
-            getJointAngles(bitmap)
+    val processedPose = imageBitmap
+        .mapNotNull { bitmap ->
+            bitmap?.let { getJointAngles(it) }
         }
         .shareIn(
             scope = viewModelScope,
@@ -47,12 +39,11 @@ class ImagePoseAnglesViewModel constructor(
             replay = 1
         )
 
-    val validatedFirstPose = poseAngles
-        .filterNotNull()
-        .map { poseAngles ->
+    val validatedFirstPose = processedPose
+        .map { processedPose ->
             validatePose(
                 pose = getPoses().first(),
-                poseAngles = poseAngles
+                processedPose = processedPose
             )
         }
         .shareIn(
@@ -63,12 +54,9 @@ class ImagePoseAnglesViewModel constructor(
             replay = 1
         )
 
-    fun setImage(contentResolver: ContentResolver, imageUri: Uri?) {
+    fun setImage(bitmap: Bitmap) {
         viewModelScope.launch {
-            imageUri?.let { uri -> contentResolver.uriToBitmap(imageUri = uri) }
-                ?.let { bitmap ->
-                    _imageBitmap.emit(bitmap)
-                }
+            _imageBitmap.emit(bitmap)
         }
     }
 
