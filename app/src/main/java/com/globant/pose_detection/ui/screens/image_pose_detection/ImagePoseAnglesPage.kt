@@ -112,7 +112,7 @@ fun ImagePanel(
         }
 
         firstPoseValidation?.let { validationResult ->
-            Text(text = "Fist Pose validation result: $validationResult")
+            Text(text = "First Pose validation result: $validationResult")
         }
     }
 
