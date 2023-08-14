@@ -4,11 +4,14 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,10 +19,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.globant.pose_detection.ui.components.CheckIconContainer
+import com.globant.pose_detection.ui.components.CollapsingPoseDetailsContainer
+import com.globant.pose_detection.ui.components.ImageContainer
 import com.globant.domain.entities.Pose
+import com.globant.pose_detection.ui.components.PoseDetails
 import com.globant.pose_detection.utils.toFormattedString
 import com.globant.pose_detection.utils.uriToBitmap
 import com.globant.pose_detection.viewmodels.ImagePoseAnglesViewModel
@@ -47,7 +54,9 @@ fun ImagePoseAnglesPage(
 
     Column(
         modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.Bottom
+
     ) {
         ImagePanel(
             modifier = Modifier
@@ -80,13 +89,13 @@ fun ImageSelector(
         uri?.run(onImageSelected)
     }
 
-    Button(
-        modifier = modifier,
+    FloatingActionButton(
         onClick = {
             launcher.launch("image/*")
-        }
+        },
+        modifier = modifier.padding(16.dp)
     ) {
-        Text(text = "Select Image")
+        Icon(imageVector = Icons.Default.Add, contentDescription = "Add Image")
     }
 }
 
@@ -98,25 +107,27 @@ fun ImagePanel(
     firstPoseValidation: Boolean? = null
 ) {
     Column(modifier = modifier) {
+
+        val localFirstPoseValidation = firstPoseValidation ?: false
+
         imageBitmap?.let { bitmap ->
-            Image(
-                bitmap = bitmap.asImageBitmap(),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
-                contentScale = ContentScale.Fit
+
+            ImageContainer(
+                imageBitmap = bitmap.asImageBitmap(),
+                isValid = localFirstPoseValidation
+            )
+        }
+
+        firstPoseValidation?.let { validationResult ->
+            CheckIconContainer(
+                isValid = validationResult,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
 
         processedPose?.let { pose ->
-            Text(text = "Pose: ${pose.toFormattedString()}")
+            CollapsingPoseDetailsContainer(pose = pose)
         }
 
-        firstPoseValidation?.let { validationResult ->
-            Text(text = "First Pose validation result: $validationResult")
-        }
     }
-
-
 }
