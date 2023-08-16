@@ -17,6 +17,7 @@ ext {
     pose_detection_version = '18.0.0-beta3'
     guava_version = '27.1-android'
     camera_version = '1.2.3' // CameraX
+    compose_contraint_layout_version = '1.0.1'
 
     generalDependencies = [
             appcompat                   : "androidx.appcompat:appcompat:${appcompat}",
@@ -43,6 +44,7 @@ ext {
             compose_ui_test_junit4      : "androidx.compose.ui:ui-test-junit4",
             compose_ui_tooling          : "androidx.compose.ui:ui-tooling",
             compose_ui_test_manifest    : "androidx.compose.ui:ui-test-manifest",
+            compose_contraint_layout    : "androidx.constraintlayout:constraintlayout-compose:${compose_contraint_layout_version}",
 
             mlkit_pose_detection        :"com.google.mlkit:pose-detection:$pose_detection_version", // If you want to use the base sdk
             mlkit_pose_detection_accurate: "com.google.mlkit:pose-detection-accurate:$pose_detection_version", // If you want to use the accurate sdk

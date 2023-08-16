@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">pose-detection</string>
+    <!-- Page of Analysis-->
+    <string name="image_pose_page_hide_text">Hide Details</string>
+    <string name="image_pose_page_show_text">Show Details</string>
+    <string name="image_pose_page_correct_pose">Correct Pose</string>
+    <string name="image_pose_page_wrong_pose">Wrong Pose</string>
+    <string name="image_pose_page_title_details">Pose Name: %1$s</string>
+    <string name="image_pose_page_add_image_button_description">Add Image</string>
+
 </resources>
