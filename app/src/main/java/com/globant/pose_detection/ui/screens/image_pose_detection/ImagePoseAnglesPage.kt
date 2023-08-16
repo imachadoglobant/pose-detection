@@ -23,8 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.globant.pose_detection.ui.components.CheckIconContainer
-import com.globant.pose_detection.ui.components.CollapsingPoseDetailsContainer
 import com.globant.pose_detection.ui.components.ImageContainer
+import com.globant.pose_detection.ui.components.CollapsibleColumn
 import com.globant.domain.entities.Pose
 import com.globant.pose_detection.ui.components.PoseDetails
 import com.globant.pose_detection.utils.toFormattedString
@@ -126,7 +126,9 @@ fun ImagePanel(
         }
 
         processedPose?.let { pose ->
-            CollapsingPoseDetailsContainer(pose = pose)
+            CollapsibleColumn {
+                PoseDetails(pose = pose)
+            }
         }
 
     }

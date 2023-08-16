@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -33,14 +30,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.globant.domain.entities.Pose
+import com.globant.pose_detection.R
 import java.text.DecimalFormat
 
 // Image Components
@@ -73,7 +71,13 @@ fun ImageContainer(isValid: Boolean, imageBitmap: ImageBitmap) {
 fun CheckIconContainer(isValid: Boolean, modifier: Modifier) {
     val icon = if (isValid) Icons.Default.CheckCircle else Icons.Default.Warning
     val iconColor = if (isValid) Color.Green else Color.Red
-    val text = if (isValid) "Correct Pose" else "Wrong Pose"
+
+    val text = stringResource(
+        if (isValid)
+            R.string.image_pose_page_correct_pose
+        else
+            R.string.image_pose_page_wrong_pose
+    )
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
@@ -96,12 +100,6 @@ fun CheckIconContainer(isValid: Boolean, modifier: Modifier) {
 }
 
 // Details Components
-@Composable
-fun CollapsingPoseDetailsContainer(pose: Pose) {
-    CollapsibleColumn {
-        PoseDetails(pose = pose)
-    }
-}
 
 @Composable
 fun CollapsibleColumn(
@@ -119,12 +117,11 @@ fun CollapsibleColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
             if (expanded) {
-                Text("Hide Details")
+                Text(stringResource(id = R.string.image_pose_page_hide_text))
             } else {
-                Text("Show Details")
+                Text(stringResource(id = R.string.image_pose_page_show_text))
             }
         }
-
         if (expanded) {
             panel()
         }
@@ -138,7 +135,7 @@ fun PoseDetails(pose: Pose) {
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        HeaderText("Pose Name: ${pose.name}")
+        HeaderText(stringResource(id = R.string.image_pose_page_title_details, pose.name))
         pose.jointList.forEachIndexed { _, joint ->
             ValueText(title = joint.jointAngle.name, value = joint.angle)
         }
